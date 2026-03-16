@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodle LMS - Практикалық Сабақ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .page {
+            display: none;
+        }
+        .active-page {
+            display: block;
+        }
+        .group-animation {
+            animation: bounceIn 0.5s ease-out;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Навигация -->
+    <nav class="bg-indigo-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2 cursor-pointer" onclick="showPage('home')">
+                    <span class="text-2xl font-bold tracking-tighter">MOODLE<span class="text-orange-400">LAB</span></span>
+                </div>
+                <div class="hidden lg:flex space-x-2 text-sm">
+                    <button onclick="showPage('teams')" class="px-3 py-2 bg-indigo-600 rounded-md transition font-bold text-orange-300 italic">🎲 Топқа бөлу</button>
+                    <button onclick="showPage('task1')" class="px-3 py-2 hover:bg-indigo-800 rounded-md transition">1. Іздеу</button>
+                    <button onclick="showPage('task2')" class="px-3 py-2 hover:bg-indigo-800 rounded-md transition">2. Талдау</button>
+                    <button onclick="showPage('task3')" class="px-3 py-2 hover:bg-indigo-800 rounded-md transition">3. Пост</button>
+                    <button onclick="showPage('task4')" class="px-3 py-2 hover:bg-indigo-800 rounded-md transition">4. Қорғау</button>
+                    <button onclick="showPage('grading')" class="px-3 py-2 hover:bg-indigo-800 rounded-md transition font-bold border border-indigo-400">Бағалау</button>
+                </div>
+                <div class="lg:hidden">
+                    <button id="mobile-menu-btn" class="p-2 bg-indigo-800 rounded-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Басты бет -->
+    <div id="home" class="page active-page container mx-auto px-4 py-16 text-center">
+        <div class="max-w-4xl mx-auto">
+            <span class="bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full text-sm font-bold mb-4 inline-block tracking-wide uppercase">Практикалық сабақ</span>
+            <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 mb-8 tracking-tight">Moodle арқылы оқытуды басқару</h1>
+            <p class="text-xl text-slate-600 mb-12 leading-relaxed max-w-2xl mx-auto">
+                Бұл сабақта біз топқа бөлініп, әлеуметтік желілерді пайдалана отырып Moodle платформасын зерттейміз және өз жобамызды қорғаймыз.
+            </p>
+            
+            <div class="flex flex-col md:flex-row justify-center gap-6">
+                <button onclick="showPage('teams')" class="bg-indigo-700 text-white px-10 py-4 rounded-2xl font-bold hover:bg-indigo-800 transition shadow-lg shadow-indigo-200 transform hover:scale-105">Топқа бөліну</button>
+                <button onclick="showPage('task1')" class="bg-white text-indigo-700 border-2 border-indigo-700 px-10 py-4 rounded-2xl font-bold hover:bg-indigo-50 transition">Сабақты бастау</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ТОПҚА БӨЛУ БЕТІ -->
+    <div id="teams" class="page container mx-auto px-4 py-12 max-w-5xl">
+        <div class="text-center mb-10">
+            <h2 class="text-4xl font-extrabold text-slate-800 mb-4">🎲 Топқа бөлу генераторы</h2>
+            <p class="text-slate-500">Оқушылардың есімдерін енгізіп, оларды автоматты түрде 3 топқа бөліңіз.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Енгізу бөлімі -->
+            <div class="md:col-span-1 bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
+                <label class="block text-sm font-bold text-slate-700 mb-2">Оқушылар тізімі:</label>
+                <textarea id="studentNames" rows="12" class="w-full p-4 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm" placeholder="Әр есімді жаңа жолға жазыңыз..."></textarea>
+                <button onclick="generateTeams()" class="w-full mt-4 bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition">Топтарды жасақтау</button>
+                <p class="mt-4 text-[10px] text-slate-400 italic text-center">Кеңес: Тізімді Word немесе Excel-ден көшіріп қоюға болады.</p>
+            </div>
+
+            <!-- Нәтиже бөлімі -->
+            <div class="md:col-span-2 space-y-6">
+                <div id="teamsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Топтар осында шығады -->
+                    <div class="bg-slate-100 border-2 border-dashed border-slate-200 rounded-3xl h-64 flex items-center justify-center text-slate-400 text-center p-6 md:col-span-3">
+                        Тізімді енгізіп, "Жасақтау" батырмасын басыңыз
+                    </div>
+                </div>
+                
+                <div id="actionButtons" class="hidden flex justify-center space-x-4">
+                    <button onclick="generateTeams()" class="text-indigo-600 font-bold hover:underline">Қайта бөлу</button>
+                    <button onclick="showPage('task1')" class="bg-green-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-green-700">1-тапсырмаға көшу →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1-тапсырма: Ақпарат іздеу -->
+    <div id="task1" class="page container mx-auto px-4 py-12 max-w-5xl">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-extrabold text-slate-800">1-тапсырма. Ақпарат іздеу</h2>
+            <span class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-sm font-bold">3 БАЛЛ</span>
+        </div>
+        
+        <p class="text-slate-600 mb-8 italic">Әлеуметтік желілерді (YouTube, Instagram, TikTok) қолданып, топтық тапсырманы орындаңыз:</p>
+
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white p-6 rounded-2xl border-t-4 border-red-500 shadow-sm">
+                <h3 class="font-bold text-red-600 mb-3 uppercase tracking-wider text-sm">1-топ Тапсырмасы</h3>
+                <p class="text-slate-700 font-medium leading-relaxed">"Moodle деген не?" тақырыбында 1 қысқа видео табу.</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border-t-4 border-pink-500 shadow-sm">
+                <h3 class="font-bold text-pink-600 mb-3 uppercase tracking-wider text-sm">2-топ Тапсырмасы</h3>
+                <p class="text-slate-700 font-medium leading-relaxed">"Moodle платформасының мүмкіндіктері" туралы ақпарат табу.</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border-t-4 border-blue-500 shadow-sm">
+                <h3 class="font-bold text-blue-600 mb-3 uppercase tracking-wider text-sm">3-топ Тапсырмасы</h3>
+                <p class="text-slate-700 font-medium leading-relaxed">"Moodle артықшылықтары мен кемшіліктері" туралы пікірлер табу.</p>
+            </div>
+        </div>
+
+        <div class="flex justify-between">
+            <button onclick="showPage('teams')" class="text-slate-400 font-bold hover:text-slate-600">← Топтарға оралу</button>
+            <button onclick="showPage('task2')" class="bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-800 shadow-lg shadow-indigo-100">Талдауға өту →</button>
+        </div>
+    </div>
+
+    <!-- 2-тапсырма: Талдау -->
+    <div id="task2" class="page container mx-auto px-4 py-12 max-w-4xl">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-extrabold text-slate-800">2-тапсырма. Талдау</h2>
+            <span class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-sm font-bold">3 БАЛЛ</span>
+        </div>
+        <div class="space-y-4 mb-12" id="qList">
+            <!-- Сұрақтар -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-start space-x-4">
+                <div class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                <p class="text-lg text-slate-800">Moodle платформасы не үшін қолданылады?</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-start space-x-4">
+                <div class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                <p class="text-lg text-slate-800">Moodle арқылы мұғалім қандай жұмыстар жасай алады?</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-start space-x-4">
+                <div class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                <p class="text-lg text-slate-800">Moodle-дің 2 артықшылығын атаңыз.</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-start space-x-4">
+                <div class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
+                <p class="text-lg text-slate-800">Moodle-ді мектепте қолдануға бола ма?</p>
+            </div>
+        </div>
+        <div class="flex justify-between">
+            <button onclick="showPage('task1')" class="text-slate-400 font-bold hover:text-slate-600">← Іздеу</button>
+            <button onclick="showPage('task3')" class="bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-800">Пост жасау →</button>
+        </div>
+    </div>
+
+    <!-- 3-тапсырма: Пост жасау -->
+    <div id="task3" class="page container mx-auto px-4 py-12 max-w-4xl">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-extrabold text-slate-800">3-тапсырма. Пост дайындау</h2>
+            <span class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-sm font-bold">2 БАЛЛ</span>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 text-slate-700">
+                <h3 class="font-bold text-lg mb-4 text-indigo-700">Пост құрылымы:</h3>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Тақырып</li>
+                    <li>3 негізгі ақпарат</li>
+                    <li>1 сурет немесе скриншот</li>
+                    <li>Қорытынды</li>
+                </ul>
+            </div>
+            <div class="bg-indigo-900 text-white p-6 rounded-3xl shadow-xl">
+                <h4 class="font-bold mb-2">Мысалы:</h4>
+                <p class="text-orange-300 font-bold">Moodle – онлайн оқу платформасы</p>
+                <p class="text-sm mt-2">• Онлайн тапсырмалар беру</p>
+                <p class="text-sm">• Тест жасау</p>
+                <p class="text-sm">• Оқушылардың бағаларын көру</p>
+            </div>
+        </div>
+        <div class="flex justify-between">
+            <button onclick="showPage('task2')" class="text-slate-400 font-bold hover:text-slate-600">← Талдау</button>
+            <button onclick="showPage('task4')" class="bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-800">Қорғауға өту →</button>
+        </div>
+    </div>
+
+    <!-- 4-тапсырма: Қорғау -->
+    <div id="task4" class="page container mx-auto px-4 py-12 max-w-4xl text-center">
+        <div class="bg-white rounded-3xl p-12 shadow-xl border border-slate-100">
+            <h2 class="text-3xl font-extrabold mb-6">4-тапсырма. Қорғау</h2>
+            <div class="bg-orange-50 text-orange-700 p-4 rounded-xl inline-block font-bold mb-6">⏱️ Уақыт: 2 минут</div>
+            <p class="text-slate-600 mb-8">Әр топ өз жұмысын сыныпқа таныстырады. Басқа топтар сұрақ қоя алады.</p>
+            <button onclick="showPage('grading')" class="bg-indigo-700 text-white px-10 py-4 rounded-2xl font-bold hover:bg-indigo-800">Бағалауды көру</button>
+        </div>
+    </div>
+
+    <!-- Бағалау беті -->
+    <div id="grading" class="page container mx-auto px-4 py-12 max-w-4xl">
+        <h2 class="text-3xl font-extrabold text-slate-800 mb-8 text-center">Бағалау критерийлері</h2>
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
+            <table class="w-full text-left">
+                <thead class="bg-slate-900 text-white">
+                    <tr><th class="px-6 py-4">Критерий</th><th class="px-6 py-4 text-center">Балл</th></tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    <tr><td class="px-6 py-4">Ақпаратты дұрыс табу</td><td class="px-6 py-4 text-center font-bold">3</td></tr>
+                    <tr><td class="px-6 py-4">Талдау жасау</td><td class="px-6 py-4 text-center font-bold">3</td></tr>
+                    <tr><td class="px-6 py-4">Посттың сапасы</td><td class="px-6 py-4 text-center font-bold">2</td></tr>
+                    <tr><td class="px-6 py-4">Топтық жұмыс</td><td class="px-6 py-4 text-center font-bold">2</td></tr>
+                </tbody>
+                <tfoot class="bg-indigo-50 font-bold">
+                    <tr><td class="px-6 py-4">Жалпы</td><td class="px-6 py-4 text-center">10 балл</td></tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <footer class="mt-12 py-12 bg-slate-100 text-center text-slate-500 text-sm">
+        <p>&copy; 2024 MoodleLab - Практикалық сабақ</p>
+    </footer>
+
+    <script>
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active-page'));
+            const activePage = document.getElementById(pageId);
+            if (activePage) {
+                activePage.classList.add('active-page');
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function generateTeams() {
+            const input = document.getElementById('studentNames').value.trim();
+            if (!input) {
+                alert("Ең алдымен оқушылар есімдерін енгізіңіз!");
+                return;
+            }
+
+            const names = input.split('\n').filter(name => name.trim() !== '');
+            if (names.length < 3) {
+                alert("Топқа бөлу үшін кемінде 3 оқушы керек!");
+                return;
+            }
+
+            // Shuffle array
+            for (let i = names.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [names[i], names[j]] = [names[j], names[i]];
+            }
+
+            const teams = [[], [], []];
+            names.forEach((name, index) => {
+                teams[index % 3].push(name);
+            });
+
+            const container = document.getElementById('teamsContainer');
+            const actionBtns = document.getElementById('actionButtons');
+            container.innerHTML = '';
+            
+            const teamColors = ['border-red-500 bg-red-50', 'border-pink-500 bg-pink-50', 'border-blue-500 bg-blue-50'];
+            const teamTitles = ['1-топ: Ізденушілер', '2-топ: Мүмкіндіктер', '3-топ: Сарапшылар'];
+
+            teams.forEach((team, i) => {
+                const teamDiv = document.createElement('div');
+                teamDiv.className = `group-animation p-6 rounded-3xl border-2 shadow-sm ${teamColors[i]}`;
+                teamDiv.innerHTML = `
+                    <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">${teamTitles[i]}</h3>
+                    <ul class="space-y-2">
+                        ${team.map(name => `<li class="text-sm bg-white/50 p-2 rounded-lg border border-white/50">${name}</li>`).join('')}
+                    </ul>
+                `;
+                container.appendChild(teamDiv);
+            });
+
+            actionBtns.classList.remove('hidden');
+        }
+
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const current = document.querySelector('.active-page').id;
+            const flow = ['home', 'teams', 'task1', 'task2', 'task3', 'task4', 'grading'];
+            const nextIndex = (flow.indexOf(current) + 1) % flow.length;
+            showPage(flow[nextIndex]);
+        });
+    </script>
+</body>
+</html>
